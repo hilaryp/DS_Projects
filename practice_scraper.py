@@ -14,6 +14,7 @@ def get_titles():
     html = urlopen(URL).read()
     soup = BeautifulSoup(html, "lxml")
     titles = [a.string for a in soup.find_all(href=re.compile("abstract"))]
+                                            # TODO: try r"abstract" instead
     return titles
 
 if __name__ == '__main__':
