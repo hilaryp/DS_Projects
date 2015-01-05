@@ -20,4 +20,4 @@ if __name__ == '__main__':
     raw = get_titles()
     for x in raw:
         y = x.encode('utf8')
-        print y + "\n"
+        print y
