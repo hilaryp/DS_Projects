@@ -33,8 +33,9 @@ def get_stem_freqs(titles):
     stem_word = {stem : max(dct.iteritems(), key=itemgetter(1))[0] 
                  for (stem,dct) in word_by_stem.iteritems()}
     
-    freqs = output_freqs(stem_word, stem_freq)
-    return freqs
+    # Create dict of {wordform : freq} pairs
+    freq = {val : stem_freq[key] for (key,val) in stem_word.iteritems()}
+    return freq
 
 def get_words(titles):
     """Tokenize title file & return list of words"""
@@ -42,17 +43,6 @@ def get_words(titles):
     # Clean up chars tokenizing didn't catch
     words = [w.strip("'-") for w in words]
     return words
-
-def output_freqs(stem_word, stem_freq):
-    """Create dict of {wordform : freq} pairs"""
-    freq = {}
-    for key, val in stem_word.items():
-        try:
-            freq[val] = stem_freq[key]
-        except KeyError:
-            print >> sys.stderr, key
-            continue
-    return freq
 
 def main():
     try:
@@ -70,7 +60,7 @@ def main():
     freqs = get_stem_freqs(titles)
 
     # Write output csv
-    with open('LSA-counts.csv', 'w') as csvfile:
+    with open(out_path, 'w') as csvfile:
         writer = unicodecsv.writer(csvfile, encoding='utf-8')
         writer.writerow(('word', 'count'))
         for key, count in freqs.iteritems():
