@@ -13,6 +13,19 @@ import codecs
 import unicodecsv
 
 stemmer = SnowballStemmer("english")
+STOPWORDS = ['A', 'ALL', 'AM', 'AN', 'AND', 'ARE', 'AS', 
+              'AT', 'BE', 'BEEN', 'BOTH', 'BUT', 'BY', 'CAN', 
+              'COULD', 'CUZ', 'DID', 'DO', 'DOES', 'DOWN', 'EACH', 'FOR', 
+              'FROM', 'HAD', 'HAS', 'HAVE', 'HE', 'HER', 'HERE', 'HIS', 
+              'I', 'IF', 'IN', 'IS', 'IT', 'ITS', 'LIKE', 'MAY', 'ME', 
+              'MIGHT', 'MUST', 'MY', 'NO', 'NOR', 'OF', 'ON', 'ONE', 'OR', 
+              'OUR', 'OUT', 'ROUND', 'SHALL', 'SHE', 'SHOULD', 'SINCE', 
+              'SO', 'SOME', 'SUCH', 'THAN', 'THAT', 'THE', 'THEIR', 'THEM', 
+              'THESE', 'THEY', 'THIS', 'THOSE', 'THROUGH', 'TILL', 'TO', 
+              'TOO', 'UP', 'US', 'WAS', 'WE', 'WERE', 'WHAT', 'WHEN', 
+              'WHO', 'WHOM', 'WHOSE', 'WHY', 'WILL', 'WITH', 'WOULD', 
+              'YEAH', 'YOU', 'YOUR', '?', '!', ".", ',', '-', '"', "'", 
+              ':', '', '(', ')', '&', '``', '[', ']']
 
 def get_stem_freqs(titles):
     """Return most common word form and frequency for each stem in file""" 
@@ -26,8 +39,9 @@ def get_stem_freqs(titles):
     # Stem each word and update counts
     for word in words:
         stem = stemmer.stem(word).upper()
-        word_by_stem[stem][word] += 1
-        stem_freq[stem] += 1
+        if stem not in STOPWORDS:
+            word_by_stem[stem][word] += 1
+            stem_freq[stem] += 1
 
     # Find the most frequent form of each stem, {STEM : wordform}
     stem_word = {stem : max(dct.iteritems(), key=itemgetter(1))[0] 
