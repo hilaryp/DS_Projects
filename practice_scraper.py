@@ -1,24 +1,62 @@
 #!/usr/bin/env python
-# 
-# Practice making a simple web scraper!
-# Scrapes the abstract titles from the LSA 2015 schedule
-# Print output intended to pipe to a text file
+# -*- coding: utf-8 -*-
+#
+
+"""Practice making a simple web scraper!
+Kudos to Constantine (https://github.com/ConstantineLignos) for encoding 
+magic and general embetterment.
+
+Take a URL and a file path and write the abstract titles from the URL
+(assumed to be the LSA 2015 schedule) to a text file.
+"""
+
+import sys
+import re
+import codecs
+from urllib2 import urlopen
 
 from bs4 import BeautifulSoup
-from urllib2 import urlopen
-import re
 
-URL = "http://www.linguisticsociety.org/node/3901/schedule"
+ABSTRACT_RE = re.compile("abstract")
+BAD_CHARS = u"\"“”‘’`'"
+BAD_CHARS_MAP = {ord(char): None for char in BAD_CHARS}
 
-def get_titles():
-    html = urlopen(URL).read()
-    soup = BeautifulSoup(html, "lxml")
-    titles = [a.string for a in soup.find_all(href=re.compile("abstract"))]
-                                            # TODO: try r"abstract" instead
-    return titles
+
+def get_titles(url):
+    """Return all the abstract titles from the given URL."""
+    req = urlopen(url)
+    # Read encoding from page
+    encoding = req.headers['content-type'].split('charset=')[-1]
+    # Encode content properly
+    content = unicode(req.read(), encoding)
+    soup = BeautifulSoup(content, "lxml")
+    # Clean each title
+    titles = [clean_title(a.string) for a in soup.find_all(href=ABSTRACT_RE)]
+    return (titles, encoding)
+
+
+def clean_title(title):
+    """Return a sanitized version of a title."""
+    return title.translate(BAD_CHARS_MAP)
+
+
+def main():
+    """Get and print the titles."""
+    try:
+        url = sys.argv[1]
+        out_path = sys.argv[2]
+    except IndexError:
+        print >> sys.stderr, "Usage: practice_scaper url output_path"
+        exit(1)
+
+    # Read titles
+    titles, encoding = get_titles(url)
+
+    # Write them out
+    with codecs.open(out_path, 'w', encoding) as out_file:
+        for title in titles:
+            print >> out_file, title
+
 
 if __name__ == '__main__':
-    raw = get_titles()
-    for x in raw:
-        y = x.encode('utf8')
-        print y
+    main()
