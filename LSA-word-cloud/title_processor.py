@@ -2,7 +2,8 @@
 # 
 
 """Process a list of talk titles (scraped from LSA schedule using
-practice_scraper.py) to get stem frequency & most frequent wordform"""
+practice_scraper.py) to get stem frequency & most frequent wordform.
+Capitalization is determined by most frequent form and not normalized."""
 
 from nltk import word_tokenize, SnowballStemmer
 from collections import defaultdict, Counter
