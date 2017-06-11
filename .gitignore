@@ -1,9 +1,10 @@
 .DS_Store
 
-# data files
+# data/output files
 *.csv
 *.txt
 *.gz
+*.png
 
 # sklearn models
 *.npy
