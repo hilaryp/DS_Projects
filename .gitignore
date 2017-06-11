@@ -1,0 +1,13 @@
+.DS_Store
+
+# data files
+*.csv
+*.txt
+*.gz
+
+# sklearn models
+*.npy
+*.pkl
+
+# python
+*.pyc
